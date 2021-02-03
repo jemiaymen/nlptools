@@ -1,0 +1,23 @@
+tag	 description
+NOUN	noun, singular or mass
+IN	Preposition or subordinating conjunction
+PUNC	punctuation
+JJ	adjective
+NNP	Proper noun, singular
+CC	Coordinating conjunction
+VBP	Verb, non-3rd person singular present
+VBD	Verb, past tense
+NNS	noun, plural
+RP	particle
+CD	Cardinal number
+WP	Wh-pronoun
+DT	determiner
+NOFUNC	withou function
+PRP	Personal pronoun
+RB	adverb
+VBN	verb, past participle
+UH	interjection
+WRB	Wh-adverb
+NNPS	Proper noun, plural
+VB	verb, base form
+VERB	verb, base form
