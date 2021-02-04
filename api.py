@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from tools import Tag
+from tools import Tag, Labels, Ner, Pos
 
 
-app = FastAPI(docs_url='/')
+app = FastAPI(docs_url='/nlptools/docs')
 T = Tag()
 
 
@@ -14,6 +14,18 @@ def POS():
 @app.get("/NER")
 def NER():
     return T.NER
+
+
+@app.post("/project/ner/create/")
+def create_ner_project(project: str, data: str):
+    n = Ner(name=project, path=data)
+    return n.name
+
+
+@app.post("/project/pos/create/")
+def create_pos_project(project: str, data: str):
+    p = Pos(name=project, path=data)
+    return p.name
 
 
 @app.post("/POS/{word}/{id}")
@@ -48,4 +60,4 @@ def generate_ner():
     return T.gen_doc(is_pos=False)
 
 
-# uvicorn api: app - -reload - -port 80 - -host 0.0.0.0
+# uvicorn api:app --reload --port 80 --host 0.0.0.0

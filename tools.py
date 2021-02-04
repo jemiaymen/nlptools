@@ -160,6 +160,7 @@ class Tag():
                        encoding='utf8', header=None)
             return 'generate ner file in : {}'.format(path)
 
+
 class Project():
     def __init__(self, name, type, path):
         self.name = name
@@ -175,11 +176,11 @@ class Project():
         self.data = pd.read_csv(
             self.path, encoding='utf8', sep='\n', header=None
         )
-
-        with SqliteDict(self.db, autocommit=True, tablename='project') as db:
-            db['done'] = 0
-            db['data_count'] = int(self.data.count())
-            db['project_type'] = self.type
+        if not self.is_first():
+            with SqliteDict(self.db, autocommit=True, tablename='project') as db:
+                db['done'] = 0
+                db['data_count'] = int(self.data.count())
+                db['project_type'] = self.type
 
     def next(self):
         with SqliteDict(self.db, autocommit=True, tablename='project') as db:
@@ -191,6 +192,20 @@ class Project():
     def done(self):
         with SqliteDict(self.db, autocommit=True, tablename='project') as db:
             db['done'] += 1
+
+    def is_first(self):
+        return os.path.exists(self.db)
+
+    def project_details(self):
+        if not os.path.exists(self.db):
+            raise Exception('project not found !')
+        re = {}
+        with SqliteDict(self.db, tablename='project') as db:
+            re['done'] = db['done']
+            re['data_count'] = db['data_count']
+            re['project_type'] = db['project_type']
+        return re
+
 
 class Labels(Project):
 
@@ -219,13 +234,38 @@ class Labels(Project):
         self.done()
         return True
 
-class Ner(Project,Tag):
 
-    def __init__(self,name,path,type='NER'):
-        super().__init__(name=name,path=path,type=type)
+class Ner(Project, Tag):
+
+    def __init__(self, name, path, type='NER', pos='data/pos.db', ner='data/ner.db'):
+        Project.__init__(self, name=name, path=path, type=type)
+        Tag.__init__(self, pos=pos, ner=ner)
         self.db = 'projects/' + name + '/setting.db'
-        super().__init__(pos='data/pos.db', ner='data/ner.db')
 
     def valid_line(self):
         self.done()
         return True
+
+    def tag(self, word, id):
+        super().tag(word, id, is_pos=False)
+
+    def gen_doc(self):
+        super().gen_doc(is_pos=False)
+
+
+class Pos(Project, Tag):
+
+    def __init__(self, name, path, type='POS', pos='data/pos.db', ner='data/ner.db'):
+        Project.__init__(self, name=name, path=path, type=type)
+        Tag.__init__(self, pos=pos, ner=ner)
+        self.db = 'projects/' + name + '/setting.db'
+
+    def valid_line(self):
+        self.done()
+        return True
+
+    def tag(self, word, id):
+        super().tag(word, id, is_pos=True)
+
+    def gen_doc(self):
+        super().gen_doc(is_pos=True)
