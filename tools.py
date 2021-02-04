@@ -160,7 +160,6 @@ class Tag():
                        encoding='utf8', header=None)
             return 'generate ner file in : {}'.format(path)
 
-
 class Project():
     def __init__(self, name, type, path):
         self.name = name
@@ -193,7 +192,6 @@ class Project():
         with SqliteDict(self.db, autocommit=True, tablename='project') as db:
             db['done'] += 1
 
-
 class Labels(Project):
 
     def __init__(self, name, path, type='Labels'):
@@ -218,5 +216,16 @@ class Labels(Project):
         with open(self.f, 'a+') as file:
             line = text + '\t' + label + '\n'
             file.write(line)
+        self.done()
+        return True
+
+class Ner(Project,Tag):
+
+    def __init__(self,name,path,type='NER'):
+        super().__init__(name=name,path=path,type=type)
+        self.db = 'projects/' + name + '/setting.db'
+        super().__init__(pos='data/pos.db', ner='data/ner.db')
+
+    def valid_line(self):
         self.done()
         return True
