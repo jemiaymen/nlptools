@@ -3,6 +3,79 @@ import pandas as pd
 import os
 
 
+TYPE_PROJECT = ['NER', 'POS', 'LABEL']
+
+
+class Work():
+    @staticmethod
+    def get_all(path='projects/.db'):
+        db = SqliteDict(path, tablename='projects')
+        re = list(db.items())
+        db.close()
+        return list(re)
+
+    @staticmethod
+    def add_project(name, id_type, path='projects/.db'):
+        with SqliteDict(path, autocommit=True, tablename='projects') as db:
+            try:
+                db[name] = TYPE_PROJECT[id_type]
+            except IndexError:
+                raise Exception(
+                    'id type project not found please chose between (0,1,2) !')
+        return True
+
+
+class Project():
+    def __init__(self, name, type, path=None):
+        self.name = name
+        self.type = type
+        if path == None:
+            self.path = 'data/' + name + '.tab'
+        else:
+            self.path = path
+        self.db = 'projects/' + self.name + '/setting.db'
+
+        if not os.path.exists('projects/' + self.name):
+            os.mkdir('projects/' + self.name)
+        self.setting()
+
+    def setting(self):
+        self.data = pd.read_csv(
+            self.path, encoding='utf8', sep='\n', header=None
+        )
+        if self.is_first():
+            with SqliteDict(self.db, autocommit=True, tablename='project') as db:
+                db['done'] = 0
+                db['data_count'] = int(self.data.count())
+                db['project_type'] = self.type
+
+            Work.add_project(self.name, self.type)
+
+    def next(self):
+        with SqliteDict(self.db, autocommit=True, tablename='project') as db:
+            if db['done'] >= db['data_count']:
+                raise Exception('all data in project done')
+            d = int(db['done'])
+        return self.data[0][d]
+
+    def done(self):
+        with SqliteDict(self.db, autocommit=True, tablename='project') as db:
+            db['done'] += 1
+
+    def is_first(self):
+        return not os.path.exists(self.db)
+
+    def project_details(self):
+        if not os.path.exists(self.db):
+            raise Exception('project not found !')
+        re = {}
+        with SqliteDict(self.db, tablename='project') as db:
+            re['done'] = db['done']
+            re['data_count'] = db['data_count']
+            re['project_type'] = db['project_type']
+        return re
+
+
 class Tag():
     def __init__(self, pos='data/pos.db', ner='data/ner.db'):
         self.path_pos = pos
@@ -161,55 +234,9 @@ class Tag():
             return 'generate ner file in : {}'.format(path)
 
 
-class Project():
-    def __init__(self, name, type, path):
-        self.name = name
-        self.type = type
-        self.path = path
-        self.db = 'projects/' + self.name + '/setting.db'
-
-        if not os.path.exists('projects/' + self.name):
-            os.mkdir('projects/' + self.name)
-        self.setting()
-
-    def setting(self):
-        self.data = pd.read_csv(
-            self.path, encoding='utf8', sep='\n', header=None
-        )
-        if not self.is_first():
-            with SqliteDict(self.db, autocommit=True, tablename='project') as db:
-                db['done'] = 0
-                db['data_count'] = int(self.data.count())
-                db['project_type'] = self.type
-
-    def next(self):
-        with SqliteDict(self.db, autocommit=True, tablename='project') as db:
-            if db['done'] >= db['data_count']:
-                raise Exception('all data in project done')
-            d = int(db['done'])
-        return self.data[0][d]
-
-    def done(self):
-        with SqliteDict(self.db, autocommit=True, tablename='project') as db:
-            db['done'] += 1
-
-    def is_first(self):
-        return os.path.exists(self.db)
-
-    def project_details(self):
-        if not os.path.exists(self.db):
-            raise Exception('project not found !')
-        re = {}
-        with SqliteDict(self.db, tablename='project') as db:
-            re['done'] = db['done']
-            re['data_count'] = db['data_count']
-            re['project_type'] = db['project_type']
-        return re
-
-
 class Labels(Project):
 
-    def __init__(self, name, path, type='Labels'):
+    def __init__(self, name, path=None, type=2):
         super().__init__(name=name, path=path, type=type)
         self.db = 'projects/' + name + '/setting.db'
         self.f = 'projects/' + name + '/done.tab'
@@ -217,6 +244,7 @@ class Labels(Project):
     def add_label(self, label, color):
         with SqliteDict(self.db, autocommit=True, tablename='labels') as db:
             db[label] = color
+        return True
 
     def get_labels(self):
         with SqliteDict(self.db, tablename='labels') as db:
@@ -237,7 +265,7 @@ class Labels(Project):
 
 class Ner(Project, Tag):
 
-    def __init__(self, name, path, type='NER', pos='data/pos.db', ner='data/ner.db'):
+    def __init__(self, name, path=None, type=0, pos='data/pos.db', ner='data/ner.db'):
         Project.__init__(self, name=name, path=path, type=type)
         Tag.__init__(self, pos=pos, ner=ner)
         self.db = 'projects/' + name + '/setting.db'
@@ -255,7 +283,7 @@ class Ner(Project, Tag):
 
 class Pos(Project, Tag):
 
-    def __init__(self, name, path, type='POS', pos='data/pos.db', ner='data/ner.db'):
+    def __init__(self, name, path=None, type=1, pos='data/pos.db', ner='data/ner.db'):
         Project.__init__(self, name=name, path=path, type=type)
         Tag.__init__(self, pos=pos, ner=ner)
         self.db = 'projects/' + name + '/setting.db'
