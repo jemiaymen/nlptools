@@ -30,7 +30,7 @@ class Project():
         self.name = name
         self.type = type
         if path == None:
-            self.path = 'data/' + name + '.tab'
+            self.path = 'data/projects/' + name + '.tab'
         else:
             self.path = path
         self.db = 'projects/' + self.name + '/setting.db'
@@ -54,7 +54,7 @@ class Project():
     def next(self):
         with SqliteDict(self.db, autocommit=True, tablename='project') as db:
             if db['done'] >= db['data_count']:
-                raise Exception('all data in project done')
+                return False
             d = int(db['done'])
         return self.data[0][d]
 
@@ -163,6 +163,16 @@ class Tag():
                 return ner
             except IndexError:
                 raise Exception('id ner not found !')
+
+    def tags(self, data, is_pos=True):
+        if is_pos:
+            with SqliteDict(self.path_pos, autocommit=True) as db:
+                for x in data:
+                    db[x['text']] = x['tag']
+        else:
+            with SqliteDict(self.path_ner, autocommit=True) as db:
+                for x in data:
+                    db[x['text']] = x['tag']
 
     def pos(self, word):
         """ 

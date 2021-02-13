@@ -1,5 +1,4 @@
-from sys import path
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from tools import Tag, Labels, Ner, Pos, Work, TYPE_PROJECT
@@ -77,14 +76,22 @@ def add_label(name: str, label:  str, color: str):
 
 
 @app.post("/project/ner/create/")
-def create_ner_project(project: str, data: str):
-    n = Ner(name=project, path=data)
+async def create_ner_project(project: str, data: UploadFile = File(...)):
+    with open('data/projects/' + project + '.tab', mode='wb+') as f:
+        c = data.file.read()
+        f.write(c)
+
+    n = Ner(name=project)
     return n.name
 
 
 @app.post("/project/pos/create/")
-def create_pos_project(project: str, data: str):
-    p = Pos(name=project, path=data)
+async def create_pos_project(project: str, data: UploadFile = File(...)):
+    with open('data/projects/' + project + '.tab', mode='wb+') as f:
+        c = data.file.read()
+        f.write(c)
+
+    p = Pos(name=project)
     return p.name
 
 
@@ -101,6 +108,20 @@ def create_label_project(project: str, data: str):
 def add_pos(word: str, id: int):
     re = T.tag(is_pos=True, word=word, id=id)
     return re
+
+
+@app.post("/POS/tags")
+async def add_multi_pos(request: Request):
+    data = await request.json()
+    T.tags(data['data'], is_pos=True)
+    return True
+
+
+@app.post("/NER/tags")
+async def add_multi_ner(request: Request):
+    data = await request.json()
+    T.tags(data, is_pos=False)
+    return True
 
 
 @app.post("/NER/tag")

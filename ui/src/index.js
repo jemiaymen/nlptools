@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Pos from './App';
+import Pos from './Pos';
+import Ner from './Ner';
 
 import reportWebVitals from './reportWebVitals';
 
@@ -9,6 +10,7 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <Pos />
+    <Ner />
   </React.StrictMode>,
   document.getElementById('root')
 );
