@@ -1,9 +1,30 @@
 from sys import path
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from tools import Tag, Labels, Ner, Pos, Work, TYPE_PROJECT
 
 
 app = FastAPI(docs_url='/nlptools/docs')
+
+origins = [
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "http://localhost",
+    "https://localhost",
+    "http://localhost:8080",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 T = Tag()
 
 
@@ -12,12 +33,22 @@ T = Tag()
 
 @app.get("/POS")
 def POS():
-    return T.POS
+    colors = {}
+    item = []
+    for i in T.POS:
+        colors[i[0]] = i[1]
+        item.append(i[0])
+    return {'colors': colors, 'item': item}
 
 
 @app.get("/NER")
 def NER():
-    return T.NER
+    colors = {}
+    item = []
+    for i in T.NER:
+        colors[i[0]] = i[1]
+        item.append(i[0])
+    return {'colors': colors, 'item': item}
 
 
 @app.get("/TYPE_PROJECT")
@@ -131,15 +162,15 @@ def get_label_line(name: str):
 """"validate line pos ner """
 
 
-@app.post("/project/{name}/pos/validate")
-def valid_pos(name: str):
-    p = Pos(name)
+@app.post("/project/pos/validate")
+def valid_pos(project: str):
+    p = Pos(project)
     return p.valid_line()
 
 
-@app.post("/project/{name}/ner/validate")
-def valid_ner(name: str):
-    n = Ner(name)
+@app.post("/project/ner/validate")
+def valid_ner(project: str):
+    n = Ner(project)
     return n.valid_line()
 
 

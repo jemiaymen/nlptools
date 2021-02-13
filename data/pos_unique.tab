@@ -1,23 +1,22 @@
-tag	 description
-NOUN	noun, singular or mass
-IN	Preposition or subordinating conjunction
-PUNC	punctuation
-JJ	adjective
-NNP	Proper noun, singular
-CC	Coordinating conjunction
-VBP	Verb, non-3rd person singular present
-VBD	Verb, past tense
-NNS	noun, plural
-RP	particle
-CD	Cardinal number
-WP	Wh-pronoun
-DT	determiner
-NOFUNC	withou function
-PRP	Personal pronoun
-RB	adverb
-VBN	verb, past participle
-UH	interjection
-WRB	Wh-adverb
-NNPS	Proper noun, plural
-VB	verb, base form
-VERB	verb, base form
+tag	 color
+NOUN	#6c8c30
+IN	#306c8c
+PUNC	#736648
+JJ	#e79e3d
+NNP	#47b0a5
+CC	#940f15
+VBP	#ddcb93
+VBD	#a4b6c1
+NNS	#2e598f
+RP	#0c2141
+CD	#4e5166
+WP	#531253
+DT	#cb48b7
+NOFUNC	#b7245c
+PRP	#b4869f
+RB	#855a5c
+VBN	#db162f
+UH	#c62e65
+WRB	#dec5e3
+NNPS	#b75d69
+VERB	#b9c6ae

@@ -204,15 +204,44 @@ class Tag():
 
     def pos_line(self, line):
         re = {}
+        value = []
         for word in line.split():
-            re[word] = self.pos(word)
+            pos = self.pos(word)
+            if pos == None:
+                continue
+            color = self.__color_pos(pos)
+            start = line.find(word)
+            end = start + len(word)
+            item = {'text': word, 'tag': pos,
+                    'start': start, 'end': end, 'color': color}
+            value.append(item)
+        re['value'] = value
         return re
 
     def ner_line(self, line):
         re = {}
+        value = []
         for word in line.split():
-            re[word] = self.ner(word)
+            ner = self.ner(word)
+            if ner == None:
+                continue
+            color = self.__color_ner(ner)
+
+            start = line.find(word)
+            end = start + len(word)
+            item = {'text': word, 'tag': ner,
+                    'start': start, 'end': end, 'color': color}
+            value.append(item)
+        re['value'] = value
         return re
+
+    def __color_ner(self, ner):
+        color = [item for item in self.NER if item[0] == ner]
+        return color[0][1]
+
+    def __color_pos(self, pos):
+        color = [item for item in self.POS if item[0] == pos]
+        return color[0][1]
 
     def gen_doc(self, is_pos=True):
 
