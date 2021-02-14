@@ -68,7 +68,7 @@ def get_labels(name: str):
     return l.get_labels()
 
 
-@app.post("/LABELS/{name}/add")
+@app.post("/LABELS/add")
 def add_label(name: str, label:  str, color: str):
     l = Labels(name)
     return l.add_label(label, color)
@@ -201,4 +201,4 @@ def valid_ner(project: str):
     return n.valid_line()
 
 
-# uvicorn api:app --reload --port 80 --host 0.0.0.0
+# uvicorn api:app --reload --port 90 --host 0.0.0.0

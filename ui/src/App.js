@@ -16,9 +16,10 @@ import {
 
 import { BrowserRouter as Router, NavLink as JMXNavLink, Link, Route, Switch } from 'react-router-dom'
 
-import CreateProjectForm, { API_BASE_URL } from './Project'
+import CreateProjectForm, { API_BASE_URL, CreateLabelForm } from './Project'
 import Pos from './Pos'
 import Ner from './Ner'
+import Label from './Label'
 
 
 class App extends React.Component {
@@ -112,7 +113,7 @@ class App extends React.Component {
                             <CreateProjectForm handle={this.handle} />
                         </Route>
                         {this.state.allProject.map((project) =>
-                            <Route path={'/project/' + project[1] + '/' + project[0]}>
+                            <Route path={'/project/' + project[1] + '/' + project[0]} key={project[0].toString()}>
                                 {
                                     project[1] == 'NER' &&
                                     <Ner project={project[0]} />
@@ -124,10 +125,10 @@ class App extends React.Component {
                                     <Pos project={project[0]} />
                                 }
 
-                                {/* {
+                                {
                                     project[1] == 'LABEL' &&
                                     <Label project={project[0]} />
-                                } */}
+                                }
                             </Route>
                         )}
                     </Switch>
