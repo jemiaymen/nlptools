@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Button, Form, FormGroup, Label, Input, FormText, Spinner, Toast, ToastBody, ToastHeader, Row, Col } from 'reactstrap'
 
 
-const API_BASE_URL = 'http://localhost/';
+const API_BASE_URL = 'http://localhost:8000/';
 
 const Card = ({ children }) => (
     <div
