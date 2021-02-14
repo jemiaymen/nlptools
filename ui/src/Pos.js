@@ -1,22 +1,13 @@
 import { TextAnnotator } from 'react-text-annotate'
 import React from 'react'
 import axios from 'axios'
+import { API_BASE_URL, Card } from './Project'
+import { Spinner, Button, Input } from 'reactstrap';
 
-const API_BASE_URL = 'http://localhost/';
 
 
-const Card = ({ children }) => (
-  <div
-    style={{
-      boxShadow: '0 2px 4px rgba(0,0,0,.1)',
-      margin: 6,
-      maxWidth: 500,
-      padding: 16,
-    }}
-  >
-    {children}
-  </div>
-)
+
+
 
 
 class Pos extends React.Component {
@@ -30,7 +21,7 @@ class Pos extends React.Component {
       value: {},
       colors: {},
       POS: [],
-      project: 'jdid',
+      project: props.project,
       isLoading: false,
       err: null,
       isDone: false
@@ -74,8 +65,7 @@ class Pos extends React.Component {
 
             this.setState({
               colors: res.data.colors,
-              POS: res.data.item,
-              tag: res.data.item[0]
+              POS: res.data.item
             });
 
 
@@ -190,27 +180,38 @@ class Pos extends React.Component {
 
     if (this.state.isDone) {
       return (
-        <div>Project done</div>
+        <div>
+          <h3 className="text-info">
+            Project : {this.state.project} Done
+          </h3>
+        </div>
       );
     }
     else if (this.state.err) {
-      return (<div>Error was found : {this.state.err}</div>);
+      return (
+        <div>
+          <h4 className="text-danger">Error was found : {this.state.err}</h4>
+        </div>
+      );
     } else if (this.state.isLoading) {
       return (
-        <div>Loading ...</div>
+        <div>
+          <Spinner color="info" />
+        </div>
       );
     } else {
       return (
         <div>
           <Card>
-            <select onChange={this.handleTagChange} value={this.state.tag}>
-              {this.state.POS.map((x) => <option key={x}>{x}</option>)};
-          </select>
+            <Input type="select" onChange={this.handleTagChange} value={this.state.tag}>
+              {this.state.POS.map((x) => <option >{x}</option>)};
+            </Input>
             <TextAnnotator
               style={{
                 fontFamily: 'IBM Plex Sans',
-                maxWidth: 600,
-                lineHeight: 1.5,
+                maxWidth: 800,
+                lineHeight: 2,
+                fontSize: 20
               }}
               content={this.state.text}
               value={this.state.value}
@@ -221,9 +222,108 @@ class Pos extends React.Component {
                 color: this.state.colors[this.state.tag],
               })}
             />
-            <button onClick={this.validateLine} disabled={this.state.isLoading}> Validate POS </button>
+            <Button outline color="info" onClick={this.validateLine} disabled={this.state.isLoading}>Validate POS</Button>{' '}
           </Card>
-        </div>
+          <Card>
+            <h4>Description</h4>
+            <table class="table table-hover">
+              <tr>
+                <th>
+                  tag
+                </th>
+                <th>
+                  description
+                </th>
+                <th>
+                  color
+                </th>
+              </tr>
+              <tr>
+                <td>NOUN</td>
+                <td>noun, singular or mass</td>
+                <td ><span style={{ backgroundColor: '#6c8c30' }} >#6c8c30</span></td>
+              </tr>
+              <tr>
+                <td>IN</td>
+                <td>Preposition or subordinating conjunction</td>
+                <td ><span style={{ backgroundColor: '#306c8c' }} >#306c8c</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+
+
+
+            PUNC	punctuation
+            JJ	adjective
+            NNP	Proper noun, singular
+            CC	Coordinating conjunction
+            VBP	Verb, non-3rd person singular present
+            VBD	Verb, past tense
+            NNS	noun, plural
+            RP	particle
+            CD	Cardinal number
+            WP	Wh-pronoun
+            DT	determiner
+            NOFUNC	withou function
+            PRP	Personal pronoun
+            RB	adverb
+            VBN	verb, past participle
+            UH	interjection
+            WRB	Wh-adverb
+            NNPS	Proper noun, plural
+            VB	verb, base form
+            VERB	verb, base form
+          </Card>
+        </div >
 
       );
     }

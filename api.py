@@ -9,10 +9,12 @@ app = FastAPI(docs_url='/nlptools/docs')
 origins = [
     "http://localhost:3000",
     "https://localhost:3000",
+    "http://localhost:90",
+    "https://localhost:90",
+    "http://localhost:8080",
+    "http://localhost:8080",
     "http://localhost",
     "https://localhost",
-    "http://localhost:8080",
-    "http://localhost:8080",
 ]
 
 app.add_middleware(
@@ -96,8 +98,12 @@ async def create_pos_project(project: str, data: UploadFile = File(...)):
 
 
 @app.post("/project/label/create")
-def create_label_project(project: str, data: str):
-    l = Labels(name=project, path=data)
+async def create_label_project(project: str, data: UploadFile = File(...)):
+    with open('data/projects/' + project + '.tab', mode='wb+') as f:
+        c = data.file.read()
+        f.write(c)
+
+    l = Labels(name=project)
     return l.name
 
 
@@ -120,7 +126,7 @@ async def add_multi_pos(request: Request):
 @app.post("/NER/tags")
 async def add_multi_ner(request: Request):
     data = await request.json()
-    T.tags(data, is_pos=False)
+    T.tags(data['data'], is_pos=False)
     return True
 
 

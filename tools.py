@@ -256,7 +256,7 @@ class Tag():
     def gen_doc(self, is_pos=True):
 
         if is_pos:
-            path = 'data/pos.tab'
+            path = 'ui/public/pos.tab'
             db = SqliteDict(self.path_pos)
             pos = pd.DataFrame.from_dict(db.items())
             db.close()
@@ -264,7 +264,7 @@ class Tag():
                        encoding='utf8', header=None)
             return 'generate pos file in : {}'.format(path)
         else:
-            path = 'data/ner.tab'
+            path = 'ui/public/ner.tab'
             db = SqliteDict(self.path_ner)
             ner = pd.DataFrame.from_dict(db.items())
             db.close()
@@ -278,7 +278,7 @@ class Labels(Project):
     def __init__(self, name, path=None, type=2):
         super().__init__(name=name, path=path, type=type)
         self.db = 'projects/' + name + '/setting.db'
-        self.f = 'projects/' + name + '/done.tab'
+        self.f = 'ui/public/' + name + '_labels.tab'
 
     def add_label(self, label, color):
         with SqliteDict(self.db, autocommit=True, tablename='labels') as db:

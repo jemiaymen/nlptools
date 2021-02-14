@@ -1,22 +1,8 @@
 import { TextAnnotator } from 'react-text-annotate'
 import React from 'react'
 import axios from 'axios'
-
-const API_BASE_URL = 'http://localhost/';
-
-
-const Card = ({ children }) => (
-    <div
-        style={{
-            boxShadow: '0 2px 4px rgba(0,0,0,.1)',
-            margin: 6,
-            maxWidth: 500,
-            padding: 16,
-        }}
-    >
-        {children}
-    </div>
-)
+import { Card, API_BASE_URL } from './Project'
+import { Spinner, Button, Input } from 'reactstrap';
 
 
 class Ner extends React.Component {
@@ -30,7 +16,7 @@ class Ner extends React.Component {
             value: {},
             colors: {},
             NER: [],
-            project: 'jdid',
+            project: props.project,
             isLoading: false,
             err: null,
             isDone: false
@@ -74,8 +60,7 @@ class Ner extends React.Component {
 
                         this.setState({
                             colors: res.data.colors,
-                            NER: res.data.item,
-                            tag: res.data.item[0]
+                            NER: res.data.item
                         });
 
 
@@ -190,27 +175,40 @@ class Ner extends React.Component {
 
         if (this.state.isDone) {
             return (
-                <div>Project done</div>
+                <div>
+                    <h3 className="text-success">
+                        Project : {this.state.project} Done
+                    </h3>
+                </div>
             );
         }
         else if (this.state.err) {
-            return (<div>Error was found : {this.state.err}</div>);
+            return (
+                <div>
+                    <h4 className="text-danger">Error was found : {this.state.err}</h4>
+                </div>
+            );
         } else if (this.state.isLoading) {
             return (
-                <div>Loading ...</div>
+                <div>
+                    <Spinner color="success" />
+                </div>
             );
         } else {
             return (
                 <div>
                     <Card>
-                        <select onChange={this.handleTagChange} value={this.state.tag}>
-                            {this.state.NER.map((x) => <option key={x}>{x}</option>)};
-          </select>
+
+                        <Input type="select" onChange={this.handleTagChange} value={this.state.tag}>
+                            {this.state.NER.map((x) => <option >{x}</option>)};
+                        </Input>
                         <TextAnnotator
                             style={{
                                 fontFamily: 'IBM Plex Sans',
-                                maxWidth: 600,
-                                lineHeight: 1.5,
+                                maxWidth: 880,
+                                lineHeight: 2,
+                                fontSize: 20,
+                                padding: 10
                             }}
                             content={this.state.text}
                             value={this.state.value}
@@ -221,7 +219,7 @@ class Ner extends React.Component {
                                 color: this.state.colors[this.state.tag],
                             })}
                         />
-                        <button onClick={this.validateLine} disabled={this.state.isLoading}> Validate NER </button>
+                        <Button outline color="success" onClick={this.validateLine} disabled={this.state.isLoading}>Validate NER</Button>{' '}
                     </Card>
                 </div>
 
@@ -230,4 +228,5 @@ class Ner extends React.Component {
 
     }
 }
+
 export default Ner;
