@@ -33,7 +33,7 @@ class App extends React.Component {
             isOpen: false
         };
 
-        this.handle = this.handle.bind(this)
+        this.handle = this.handle.bind(this);
     }
 
     createSelectProject() {
