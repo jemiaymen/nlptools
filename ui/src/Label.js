@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { Card, API_BASE_URL, Download, CreateLabelForm } from './Project'
-import { Spinner, Button, Input, Label as Lbl, Row, Col, FormGroup } from 'reactstrap';
+import { Spinner, Button, Input, Label as Lbl, Row, Col, FormGroup, ButtonToggle } from 'reactstrap';
 
 class Label extends React.Component {
     constructor(props) {
@@ -159,10 +159,11 @@ class Label extends React.Component {
                         <Card>
 
                             <FormGroup>
-                                <Lbl for="lbl">Labels</Lbl>
-                                <Input type="select" id="lbl" onChange={this.handleLabelChange} value={this.state.label}>
-                                    {this.state.labels.map((x) => <option key={x[0].toString()} style={{ backgroundColor: x[1] }}>{x[0]}</option>)};
-                                </Input>
+                                <Lbl >Labels</Lbl>
+                                <div>
+                                    {this.state.labels.map((x) => <ButtonToggle color="primary" size="sm" style={{ backgroundColor: x[1], margin: 5 }} onClick={this.handleLabelChange} key={x[0].toString()} value={x[0]} >{x[0]}</ButtonToggle>)}
+                                </div>
+
                             </FormGroup>
                             <FormGroup>
                                 <Input type="textarea" value={this.state.text} readOnly />
